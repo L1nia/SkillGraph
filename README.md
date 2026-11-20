@@ -1,161 +1,137 @@
+**English** | [Русский](README.ru.md)
+
 # SkillGraph
 
-Интерактивный desktop-клиент реестра скиллов в сдержанном стиле, вдохновлённом рабочей моделью Obsidian. Новый реестр запускается пустым: пользователь сам создаёт или импортирует скиллы, формирует зависимости и связывает цепочки с проектами.
+SkillGraph is an interactive desktop registry for reusable AI skills. Its focused, Obsidian-inspired workspace lets you author Markdown instructions, model dependencies, connect skills to projects, and coordinate provider-aware agent workflows. A new registry starts empty: users create or import their own skills and data.
 
-## Настольное приложение
+## Download
+
+Download the latest Windows x64 package from [GitHub Releases](https://github.com/L1nia/SkillGraph/releases/latest), extract it to a separate folder, and run `SkillGraph.exe`.
+
+The portable package includes the required .NET runtime. SkillGraph is a desktop application; the bundled HTML, CSS, and JavaScript are WebView2 resources and are not intended to run as a standalone website.
+
+## Run from source
 
 ```powershell
 dotnet run --project desktop-native/SkillGraph.Desktop.csproj
 ```
 
-Локальные данные desktop-версии и MCP-коннектор используют единый переносимый файл
-`data\registry.json` рядом с `SkillGraph.exe`. Репозиторий не содержит готовых скиллов:
-папка `data` оставлена как локальное хранилище, а реестр и `data\assets` создаются
-и заполняются во время работы приложения. При первом запуске приложение
-находит прежние реестры в `Documents\Codex\SkillGraphData` и AppData, выбирает самый
-полный, переносит его в папку приложения и сохраняет маркер миграции. При каждом сохранении
-предыдущая корректная копия остаётся в `registry.json.backup.json`, а при
-повреждении или подозрительном резком сокращении основного файла приложение
-автоматически восстанавливает более полную копию.
+Local desktop data and the MCP connector share one portable registry located at `data\registry.json` next to `SkillGraph.exe`. The repository does not ship preconfigured skills. The `data` directory is reserved for local storage, while the registry and `data\assets` are created and populated at runtime.
 
-Создание автономной Windows-сборки, не требующей установленного .NET:
+On first launch, SkillGraph can locate older registries in `Documents\Codex\SkillGraphData` and AppData, select the most complete valid copy, and migrate it into the application directory. Each save keeps the previous valid registry in `registry.json.backup.json`; a damaged registry or a suspiciously large data loss is recovered from the fuller valid copy.
+
+To create a self-contained Windows build:
 
 ```powershell
 dotnet restore desktop-native/SkillGraph.Desktop.csproj -r win-x64
 dotnet publish desktop-native/SkillGraph.Desktop.csproj -c Release -r win-x64 --self-contained true --no-restore -o release/SkillGraph-portable
 ```
 
-Готовая сборка появляется в `release/SkillGraph-portable/`. Для запуска откройте `SkillGraph.exe`.
+The result is written to `release/SkillGraph-portable/`. Use the packaged directory from `release` or an extracted archive from `outputs`; `desktop-native/bin`, `desktop-native/obj`, `work`, and `.build-temp` are development artifacts and must not be used as distributions.
 
-Переносите только готовую папку из `release` либо распакованный архив из
-`outputs`. Каталоги `desktop-native/bin`, `desktop-native/obj`, `work` и
-`.build-temp` являются промежуточными результатами разработки и не должны
-использоваться для запуска. Профиль WebView2 хранится в
-`%LOCALAPPDATA%\SkillGraph\WebView2`, поэтому перенос папки приложения не
-переносит устаревший браузерный кэш.
+## Features
 
-## Возможности
+### Skills and projects
 
-- Markdown-редактор и предварительный просмотр;
-- граф зависимостей;
-- библиотека скиллов;
-- масштабируемый граф с расширенным виртуальным полем: узлы можно перемещать далеко за границы экрана, панорамировать фон и вписывать все узлы кликом по проценту масштаба;
-- выбор узлов графа кликом, редактирование через правую кнопку и открытие двойным кликом;
-- создание связей между скиллами непосредственно в графе;
-- создание проектов и подключение корневых скиллов без копирования файлов в проект;
-- автоматическое разрешение цепочки и обнаружение отсутствующих/циклических зависимостей;
-- импорт Markdown/JSON и экспорт полного реестра;
-- локальная история сохранений;
-- Git-подобное сравнение текущего и предыдущего сохранения с подсветкой добавленных и удалённых строк;
-- инспектор зависимостей;
-- создание, переименование, изменение и удаление скиллов с автоматическим обновлением ссылок;
-- обязательное поле `name` используется как отображаемое имя, а отдельный ID — в ссылках;
-- описание выбранного скилла отображается и в библиотеке, и в панели «Свойства»;
-- пользовательские группы скиллов хранят только ссылки на записи общего реестра; скиллы можно переносить между группами, избранным и общим списком;
-- каждому проекту можно назначить собственный цвет метки при создании или редактировании; HEX-код можно скопировать и вставить в другой проект;
-- добавление проекта через системный выбор папки;
-- сохранение кнопкой или `Ctrl+S`, поиск через `Ctrl+F`, палитра команд через `Ctrl+K`, отмена/повтор через `Ctrl+Z`, `Ctrl+Y` или `Ctrl+Shift+Z`;
-- быстрые переходы: `Ctrl+N` — новый скилл, `Ctrl+O` — импорт, `Ctrl+G` — граф, `Ctrl+L` — общий реестр;
-- поиск/палитра команд;
-- тёмная и светлая темы;
-- адаптация для узкого экрана;
-- локальный read/write MCP-сервер для Cursor, Codex и других AI-клиентов;
-- ошибка автоматического обновления необязательной MCP-интеграции журналируется и больше не блокирует запуск приложения;
-- разрешение проектной цепочки перед планированием и изменением кода;
-- прямое чтение `skill://namespace.id@version` без скачивания из интернета;
-- командная палитра по `Ctrl+K`, включая перехват сочетания настольным окном;
-- предложение изменить SemVer только при сохранении изменённого файла, с сохранением предыдущей версии в истории;
-- создание типизированных связей непосредственно в графе;
-- перетаскивание узлов с мягким смещением связанных узлов, подписями связей и выделением узла-хаба;
-- открытие скилла двойным кликом по узлу графа;
-- изменяемая ширина навигатора и инспектора, корректная адаптация графа к размеру окна;
-- компактная кнопка избранного со звездой, заполненной для избранного скилла;
-- адаптивная панель графа: значение масштаба не обрезается при изменении ширины;
-- одинаковые полноразмерные боковые разделители и центрированные кнопки инспектора;
-- добавление, изменение и удаление тегов через окно редактирования скилла;
-- автоматическое распознавание уже настроенного Cursor: глобальное MCP-подключение выполняется только один раз;
-- глобальное подключение Cursor без копирования скиллов в рабочий репозиторий.
-- однократное подключение Codex через `~/.codex/config.toml`;
-- MCP-запись из Codex: создание скиллов и типизированных связей;
-- автоматическое обновление интерфейса после изменений реестра агентом: уведомление от системного наблюдателя файла и резервная периодическая сверка;
-- вложенное отображение зависимостей внутри главного скилла проекта;
-- импорт Markdown/JSON из папок и скачанных ZIP-архивов;
-- подключение публичных и приватных реестров GitHub/GitLab по HTTPS-ссылке: дерево и файлы читаются через API без `git clone`, а одноразовый access token не сохраняется;
-- повторное обновление удалённого реестра из окна «Источники» с сохранением происхождения скиллов;
-- цветом выделяются все узлы графа, имеющие более трёх связей;
-- справка о типах связей открывается при наведении и сохраняет активное выделение кнопки;
-- скилл можно перетащить между общим списком и «Избранным»: объект остаётся единственным в общем реестре и показывается только в выбранном разделе навигатора;
-- SVG-узлы графа не получают прямоугольную браузерную рамку при зажатии, а клавиатурный фокус обозначается обводкой самого круга;
-- при узкой ширине статистика графа переносит количество связей и область реестра на отдельную вторую строку;
-- подключение произвольного HTTPS-сервера скиллов: поддерживаются реестр SkillGraph, JSON-массив, `items` с Markdown и одиночный Markdown;
-- версия 0.8 закладывает поэтапный переход к агентно-ориентированной среде в `docs/ROADMAP.md`, не меняя текущую модель реестра;
-- версия 0.9 добавляет ссылочную модель агентов, редактор ролей и разрешений, ручное назначение скиллов, агентов проекта и горизонтальный маршрут с отдельной дорожкой для каждого агента;
-- продолжение версии 0.9 добавляет проектный контекст агента, объяснимую маршрутизацию задач, handoff между агентами, ограничения доступа к источникам и локальный журнал решений; MCP-контракт расширен инструментами `resolve_agent_context`, `route_agent_task`, `create_agent_handoff`, `list_agent_audit` и `record_agent_outcome`;
-- пункты 11–12 версии 0.9 добавляют провайдер-независимый Runtime с матрицей capabilities и локальную оценку качества «без цепочки / со SkillGraph»; MCP предоставляет `list_agent_runtimes`, `record_agent_evaluation` и `list_agent_evaluations`;
-- назначенный провайдер агента теперь исполняется как ограничение runtime, а не как декоративная метка: Codex маршрутизирует и создаёт handoff для Cursor, но не может разрешить контекст или записать результат за Cursor-агента;
-- глобальные подключения Cursor и Codex передают MCP собственный `client-provider`; аудит автоматически различает назначенный, вызывающий и фактический провайдер;
-- маршрутизация, разрешение контекста, принятие handoff и завершение задачи автоматически попадают в локальный аудит; ручные кнопки смены статуса handoff удалены;
-- один общий файл данных и два безопасных представления в навигаторе: вся библиотека и разрешённая цепочка выбранного проекта;
-- общий реестр применяется до проверки Cursor/Codex; MCP-handshake выполняется в фоне, поэтому при запуске больше не показывается ложный пустой или устаревший список;
-- проекты хранят только ID подключённых корневых скиллов: имя, содержимое, связи и версия всегда читаются из общего реестра, поэтому обновление скилла автоматически видно во всех проектах;
-- переключение между общим реестром и проектом не сохраняет данные и не может сократить библиотеку; при запуске всегда открывается общий реестр;
-- native-хост блокирует массовую непреднамеренную потерю скиллов, сравнивает основной файл с резервной копией и очищает дисковый кэш WebView2 при обновлении интерфейса;
-- единое окно AI-подключений с проверкой конфигурации, путей и реального MCP-handshake;
-- portable-метаданные MCP используют уже включённый в desktop-сборку .NET runtime и не требуют отдельной установки .NET.
-- MCP-коннектор устанавливается в `%USERPROFILE%\AppData\Local\SkillGraph\connector`, поэтому Cursor/Codex не удерживают корневую папку portable-приложения; управляемый коннектор продолжает обслуживать AI-клиенты после закрытия окна;
-- прикрепление PNG/JPG/WebP/GIF/BMP к скиллам, хранение копий в переносимой папке `data\assets` и Markdown-ссылки `skillgraph-asset://...`;
-- изображения отображаются в предпросмотре и отдельными узлами графа со связью «расширяет».
-- desktop-запуск помечается отдельным режимом и никогда не переходит на браузерный `localStorage`: при недоступном WebView2-мосте показывается безопасная ошибка без перезаписи общего реестра;
-- внешняя web-панель и браузерный источник данных удалены; прямой запуск встроенного HTML блокируется до обращения к данным;
-- закрытие интерфейса останавливает только старый MCP рядом с приложением; управляемый MCP в AppData продолжает обслуживать уже открытые Cursor/Codex-сессии и не блокирует portable-папку.
+- Markdown editor with preview and local save history.
+- Git-style comparison between the current and previous save.
+- Import from Markdown, JSON, folders, and downloaded ZIP archives.
+- Full-registry export and local search.
+- Create, rename, edit, delete, favorite, group, and tag skills.
+- Typed `requires`, `extends`, and `recommends` relationships.
+- Direct resolution of `skill://namespace.id@version` references without downloading content from the Internet.
+- Projects store references to root skills instead of copying skill content.
+- Automatic dependency ordering and detection of missing or cyclic dependencies.
+- PNG, JPG, WebP, GIF, and BMP attachments stored in portable `data\assets` and referenced through `skillgraph-asset://...`.
 
-SkillGraph работает только как настольное приложение. Встроенные HTML/CSS/JavaScript являются ресурсами WebView2 и не поддерживают самостоятельный web-запуск. Реестр сохраняется только через native-хост в локальный JSON; `localStorage` не используется. Заготовленные проекты и скиллы не создаются.
+### Dependency graph
 
-## Подключение Cursor
+- Scalable graph with a large virtual canvas, panning, zooming, and fit-to-view.
+- Dragging nodes with soft displacement of connected nodes.
+- Relationship labels, hub highlighting, direct link creation, and dependency inspection.
+- Double-click to open a skill and context actions for editing.
+- Responsive graph controls and resizable navigator and inspector panels.
 
-1. Добавьте папку проекта в SkillGraph и подключите корневые скиллы.
-2. Откройте «Контекст проекта» → «AI-подключения».
-3. Для Cursor нажмите «Подключить» или «Исправить подключение». SkillGraph проверит не только конфигурацию, но и настоящий MCP-handshake.
-4. SkillGraph добавит локальный `stdio`-сервер в глобальный файл `~/.cursor/mcp.json`.
-5. Перезапустите Cursor, если он был открыт во время настройки.
+### Agents and execution
 
-В этом же окне доступны Codex, Claude, Copilot, DeepSeek, Qwen, локальная и
-произвольная модель. Для Codex и Cursor приложение обновляет известную глобальную
-конфигурацию автоматически. Для остальных провайдеров кнопка создаёт переносимый
-`stdio` MCP-профиль в `data/connections/<provider>.mcp.json` и копирует JSON в
-буфер обмена: вставьте его в MCP-настройки используемого AI-клиента. SkillGraph
-не хранит API-ключи моделей. Значение `--client-provider` в профиле обеспечивает,
-что runtime получает только задачи агентов своего провайдера.
+- Reusable agent profiles with roles, permissions, assigned provider, and root skills.
+- Explainable routing, provider-aware runtime capabilities, and secure handoffs.
+- Persistent autonomous runs represented as a DAG and horizontal swimlane graph.
+- Task leasing, progress reporting, retry, reassignment, pause, resume, and cancellation.
+- Automatic local audit trail for routing, context resolution, handoffs, and outcomes.
+- Evaluation of runs with and without the SkillGraph context chain.
 
-MCP-сервер сообщает агенту обязательную инструкцию: перед планированием или редактированием вызвать `resolve_task_context`, прочитать `requiredOrder` и разрешать ссылки `skill://` только через SkillGraph. Реестр перечитывается на каждый запрос, поэтому сохранённые изменения доступны агенту без повторного экспорта.
+### AI and MCP integration
 
-Доступные MCP-инструменты:
+- Local read/write MCP server for Codex, Cursor, Claude, Copilot, DeepSeek, Qwen, compatible local clients, and custom providers.
+- One-time global setup for Codex and Cursor with a real MCP handshake check.
+- Portable MCP profiles for other providers in `data/connections/<provider>.mcp.json`.
+- Provider identity is enforced at runtime rather than used as a decorative label.
+- SkillGraph does not store model API keys.
+- The managed MCP connector is deployed to `%LOCALAPPDATA%\SkillGraph\connector`, so AI clients do not lock the portable application directory.
 
-- `resolve_task_context` — полная цепочка проекта с Markdown-содержимым;
-- `read_skill` — чтение одного скилла вместе с манифестом прикреплённых изображений;
-- `read_skill_asset` — загрузка выбранного изображения как настоящего MCP `ImageContent`, доступного зрению агента;
-- `list_project_skills` — корни, порядок и граф проекта;
-- `search_skills` — локальный поиск;
-- `validate_project_graph` — циклы и отсутствующие зависимости.
-- `resolve_agent_context` — контекст конкретного агента с проверкой соответствия текущему провайдеру;
-- `route_agent_task` — рекомендация исполнителя без ложной отметки о запуске;
-- `create_agent_handoff` — передача задачи от Task Manager целевому агенту;
-- `list_agent_handoffs` — очередь передач, доступная текущему провайдеру;
-- `record_agent_outcome` — запись результата и автоматическое завершение принятого handoff;
-- `list_agent_audit` — автоматический журнал маршрутизации и выполнения.
-- `create_agent_run`, `submit_agent_run_plan`, `list_agent_runs`, `get_agent_run` — сохраняемые автономные запуски и DAG-план Task Manager;
-- `register_agent_runtime`, `heartbeat_agent_runtime`, `claim_agent_run_task` — активация и безопасное получение работы Codex, Cursor, Claude, Copilot, DeepSeek, Qwen и совместимых локальных клиентов;
-- `start_agent_run_task`, `record_agent_run_progress`, `complete_agent_run_task`, `fail_agent_run_task` — lease-защищённый жизненный цикл этапа;
-- `pause_agent_run`, `resume_agent_run`, `cancel_agent_run`, `retry_agent_run_task`, `reassign_agent_run_task` — управление очередью из native-интерфейса через единый MCP-scheduler.
+### Desktop experience and safety
 
-Вкладка «Агенты → Исполнение» показывает запуски в виде горизонтального
-swimlane-графа. Task Manager и каждый исполнитель запускаются через провайдер,
-указанный в профиле агента. Открытый AI-клиент становится исполнителем после
-активации worker-режима по инструкции `WORKER-MODE.md`; обычный stdio MCP не
-может самостоятельно разбудить бездействующий AI-клиент.
+- Dark and light themes.
+- Responsive layout for narrow and short windows.
+- Windows Snap support and maximization within the taskbar work area.
+- Keyboard shortcuts for saving, search, command palette, undo/redo, navigation, creation, and import.
+- Native host file watching keeps the UI synchronized with agent changes.
+- Browser `localStorage` is never used for the desktop registry.
+- Failed optional integration updates are logged without blocking application startup.
+- Mass accidental skill loss is rejected and recoverable backups are preserved.
 
-Ручной запуск коннектора:
+## Connecting AI clients
+
+1. Add a project folder in SkillGraph and attach its root skills.
+2. Open **Project context → AI connections**.
+3. For Cursor or Codex, select **Connect** or **Repair connection**. SkillGraph validates both the configuration and an actual MCP handshake.
+4. Restart the AI client if it was already open during setup.
+
+For Claude, Copilot, DeepSeek, Qwen, local models, and custom providers, SkillGraph generates a portable `stdio` MCP profile and copies its JSON to the clipboard. Paste it into the MCP settings of the corresponding client. The `--client-provider` value ensures that a runtime only receives tasks assigned to its provider.
+
+The MCP server instructs agents to resolve the required project chain before planning or modifying code. It rereads the registry for every request, so saved changes are available without a separate export.
+
+## MCP tools
+
+Context and skills:
+
+- `resolve_task_context` — resolve the complete ordered project chain.
+- `read_skill` — read one skill and its attachment manifest.
+- `read_skill_asset` — return an attached image as MCP `ImageContent`.
+- `list_project_skills` — list roots, order, and the project graph.
+- `search_skills` — search the local registry.
+- `validate_project_graph` — detect cycles and missing dependencies.
+
+Agents and handoffs:
+
+- `resolve_agent_context` — resolve an agent context with provider checks.
+- `route_agent_task` — recommend an executor without falsely marking the task as started.
+- `create_agent_handoff`, `list_agent_handoffs`, `record_agent_outcome` — manage provider-aware task transfer and completion.
+- `list_agent_audit` — read the automatic routing and execution audit trail.
+
+Autonomous runs:
+
+- `create_agent_run`, `submit_agent_run_plan`, `list_agent_runs`, `get_agent_run`.
+- `register_agent_runtime`, `heartbeat_agent_runtime`, `claim_agent_run_task`.
+- `start_agent_run_task`, `record_agent_run_progress`, `complete_agent_run_task`, `fail_agent_run_task`.
+- `pause_agent_run`, `resume_agent_run`, `cancel_agent_run`, `retry_agent_run_task`, `reassign_agent_run_task`.
+
+The **Agents → Execution** tab displays runs as a horizontal swimlane graph. A Task Manager and each executor run through the provider assigned in their agent profile. An open AI client becomes a worker after worker mode is enabled according to [WORKER-MODE.md](docs/WORKER-MODE.md).
+
+To start the connector manually:
 
 ```powershell
 SkillGraph.Mcp.exe --registry ".\data\registry.json" --client-provider cursor
 ```
+
+## Documentation
+
+- [Roadmap](docs/ROADMAP.md)
+- [Worker mode](docs/WORKER-MODE.md)
+- [Cursor MCP integration](docs/CURSOR-MCP.md)
+- [Remote skill sources](docs/REMOTE-SOURCES.md)
+
+## Repository data policy
+
+The repository intentionally tracks only `data/.gitkeep`. Registries, attached skill assets, provider profiles, runtime state, backups, and logs remain local and are excluded from Git.
