@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>SkillGraph execution responsive fixture</title>
+  <link rel="stylesheet" href="../../styles.css">
+  <style>
+    body { display:grid; min-height:100vh; }
+    #view-agents { display:flex; min-height:100vh; }
+    .agents-layout { min-height:0; }
+  </style>
+</head>
+<body>
+  <section class="view active" id="view-agents">
+    <div class="view-toolbar agents-toolbar">
+      <div class="toolbar-title"><strong>Агенты</strong><span>7 агентов</span></div>
+      <div class="toolbar-actions">
+        <div class="agent-project-picker"><span>Проект</span><div class="agent-project-menu"><button class="agent-project-trigger"><span>test-project</span><i></i></button></div></div>
+        <div class="segmented agent-mode-tabs"><button>Профили</button><button>Маршрут</button><button>Роутер</button><button class="active">Исполнение</button><button>Handoff</button><button>Аудит</button><button>Runtime</button></div>
+        <button class="primary-button" id="addAgent">+ <span>Новый агент</span></button>
+      </div>
+    </div>
+    <div class="agents-layout">
+      <aside class="agent-list">
+        <button class="agent-list-row active"><span class="agent-avatar"></span><span><strong>Task Manager</strong><small>Просмотр, декомпозиция и делегирование</small></span><span class="count">4</span></button>
+        <button class="agent-list-row"><span class="agent-avatar"></span><span><strong>Frontend Template Agent</strong><small>Frontend-дизайн по шаблону</small></span><span class="count">4</span></button>
+      </aside>
+      <main class="agent-content">
+        <section class="agent-execution">
+          <header class="run-toolbar"><div><strong>Автономное исполнение</strong><span>Управляющий агент строит план через свой провайдер; каждый исполнитель получает этап только в runtime своего провайдера</span></div><div class="run-selector"><div class="custom-select"><button class="custom-select-trigger"><span class="custom-select-value">Создать проект по шаблону</span><i></i></button></div></div></header>
+          <form class="run-create"><textarea rows="2" placeholder="Опишите результат, который должна создать агентная цепочка"></textarea><label><span>Управляющий агент</span><div class="custom-select"><button class="custom-select-trigger"><span class="custom-select-value">Task Manager Cursor · Cursor</span><i></i></button></div></label><button class="primary-button">Запустить цепочку</button></form>
+          <div class="run-summary"><span class="run-status completed">Завершён</span><div class="run-progress-copy"><strong>100%</strong><span>5 из 5 этапов</span></div><progress max="100" value="100"></progress><div class="run-summary-controls"><div class="run-zoom"><button>−</button><span>100%</span><button>+</button></div><button class="secondary-button">Показать текущий этап</button><button class="secondary-button">Пауза</button><button class="secondary-button danger-action">Отменить</button></div></div>
+          <div class="run-workspace">
+            <div class="run-swimlane"><div class="run-empty"><strong>Граф остаётся читаемым</strong><span>На среднем окне карточка этапа переносится под граф.</span></div></div>
+            <aside class="run-task-detail" style="--agent-color:#4878df"><header><div><strong>Декомпозиция задачи</strong><span>Task Manager Cursor · Cursor</span></div><b>Готово</b></header><p>Проверить результат и передать артефакты следующему агенту.</p><dl><div><dt>Рабочий режим</dt><dd>read</dd></div><div><dt>Прогресс</dt><dd>100%</dd></div></dl></aside>
+          </div>
+        </section>
+      </main>
+    </div>
+  </section>
+</body>
+</html>

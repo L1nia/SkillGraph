@@ -1,0 +1,43 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWindowsForms>true</UseWindowsForms>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+    <AssemblyName>SkillGraph</AssemblyName>
+    <RootNamespace>SkillGraph.Desktop</RootNamespace>
+    <Version>1.0.0</Version>
+    <AssemblyVersion>1.0.0.0</AssemblyVersion>
+    <FileVersion>1.0.0.0</FileVersion>
+    <ApplicationManifest>app.manifest</ApplicationManifest>
+    <ApplicationIcon>..\assets\SkillGraph.ico</ApplicationIcon>
+    <ApplicationHighDpiMode>PerMonitorV2</ApplicationHighDpiMode>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.Web.WebView2.Core">
+      <HintPath>vendor\webview2\Microsoft.Web.WebView2.Core.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+    <Reference Include="Microsoft.Web.WebView2.WinForms">
+      <HintPath>vendor\webview2\Microsoft.Web.WebView2.WinForms.dll</HintPath>
+      <Private>true</Private>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="..\index.html" Link="web\index.html" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\styles.css" Link="web\styles.css" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\agent-run-layout.js" Link="web\agent-run-layout.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\app.js" Link="web\app.js" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="..\assets\application.png" Link="web\assets\application.png" CopyToOutputDirectory="PreserveNewest" />
+    <Content Include="vendor\webview2\WebView2Loader.dll" Link="WebView2Loader.dll" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
+  <Target Name="RemoveUnusedWebView2WpfReference" BeforeTargets="ResolveAssemblyReferences">
+    <ItemGroup>
+      <Reference Remove="@(Reference)" Condition="'%(Reference.Filename)' == 'Microsoft.Web.WebView2.Wpf'" />
+    </ItemGroup>
+  </Target>
+</Project>

@@ -1,0 +1,25 @@
+node_modules/
+package-lock.json
+.dotnet-home/
+.nuget-packages/
+.nuget-source/
+.nuget-http-cache/
+.nuget-plugins-cache/
+.temp/
+.build-temp/
+.dotnet-temp/
+.superpowers/
+work/
+outputs/
+# Runtime registry, attached skill assets and connection state stay local.
+/data/*
+!/data/.gitkeep
+desktop-native/bin/
+desktop-native/obj/
+mcp-server/bin/
+mcp-server/obj/
+release/
+*.user
+*.suo
+*.tmp
+*.log
