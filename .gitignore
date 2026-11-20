@@ -11,6 +11,27 @@ package-lock.json
 .superpowers/
 work/
 outputs/
+# Local agent instructions, working prompts and scratch specifications.
+/.agents/
+/.codex/
+/docs/prompts/
+/docs/*-RUN-PROMPT.md
+*.prompt.md
+AGENTS.local.md
+# Local environment, secrets and editor state.
+.env
+.env.*
+!.env.example
+*.local
+*.secrets.*
+secrets/
+.vs/
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db
+*.swp
+*.bak
 # Runtime registry, attached skill assets and connection state stay local.
 /data/*
 !/data/.gitkeep
