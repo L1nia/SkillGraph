@@ -18,6 +18,7 @@ outputs/
 /docs/*-RUN-PROMPT.md
 *.prompt.md
 AGENTS.local.md
+/skills/project-template-builder.md
 # Local environment, secrets and editor state.
 .env
 .env.*
